@@ -1,0 +1,1618 @@
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>COHS習慣タイプ診断ツール | 科学的習慣分析</title>
+    <meta name="description" content="ケンブリッジ大学開発の科学的習慣測定ツール。あなたが計画型か衝動型かを27問で診断。">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        body {
+            font-family: 'Helvetica Neue', 'Yu Gothic', sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.3);
+            overflow: hidden;
+        }
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            text-align: center;
+        }
+
+        .header h1 {
+            font-size: 2.5em;
+            margin-bottom: 15px;
+            font-weight: 700;
+        }
+
+        .header p {
+            font-size: 1.2em;
+            opacity: 0.9;
+            line-height: 1.5;
+        }
+
+        .intro-section {
+            padding: 40px;
+            background: #f8f9fa;
+            border-bottom: 3px solid #3498db;
+        }
+
+        .intro-section h2 {
+            color: #2c3e50;
+            font-size: 1.8em;
+            margin-bottom: 20px;
+        }
+
+        .intro-section p {
+            color: #555;
+            line-height: 1.6;
+            margin-bottom: 15px;
+        }
+
+        .scale-explanation {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            border-left: 5px solid #3498db;
+            margin-top: 20px;
+        }
+
+        .scale-grid {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+            margin-top: 15px;
+        }
+
+        .scale-item {
+            background: #ecf0f1;
+            padding: 15px 10px;
+            border-radius: 10px;
+            text-align: center;
+            font-size: 0.9em;
+            color: #2c3e50;
+            font-weight: 500;
+        }
+
+        .scale-1 { background: #e74c3c; color: white; }
+        .scale-2 { background: #f39c12; color: white; }
+        .scale-3 { background: #f1c40f; color: #2c3e50; }
+        .scale-4 { background: #27ae60; color: white; }
+        .scale-5 { background: #2ecc71; color: white; }
+
+        .questionnaire-section {
+            padding: 40px;
+        }
+
+        .section-header {
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 30px;
+            border-left: 5px solid #3498db;
+        }
+
+        .section-header h3 {
+            color: #2c3e50;
+            font-size: 1.5em;
+            margin-bottom: 10px;
+        }
+
+        .section-header p {
+            color: #555;
+            font-size: 1.1em;
+        }
+
+        .question-item {
+            background: white;
+            padding: 25px;
+            margin-bottom: 20px;
+            border-radius: 15px;
+            border: 2px solid #ecf0f1;
+            transition: all 0.3s ease;
+        }
+
+        .question-item:hover {
+            border-color: #3498db;
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(52, 152, 219, 0.1);
+        }
+
+        .question-text {
+            font-size: 1.1em;
+            color: #2c3e50;
+            margin-bottom: 20px;
+            line-height: 1.5;
+            font-weight: 500;
+        }
+
+        .question-number {
+            display: inline-block;
+            background: #3498db;
+            color: white;
+            width: 30px;
+            height: 30px;
+            border-radius: 50%;
+            text-align: center;
+            line-height: 30px;
+            font-weight: bold;
+            margin-right: 15px;
+            font-size: 0.9em;
+        }
+
+        .options {
+            display: grid;
+            grid-template-columns: repeat(5, 1fr);
+            gap: 10px;
+        }
+
+        .option-label {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 15px 10px;
+            border: 2px solid #ecf0f1;
+            border-radius: 10px;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-align: center;
+        }
+
+        .option-label:hover {
+            border-color: #3498db;
+            background: #f8f9fa;
+        }
+
+        .option-label.selected {
+            border-color: #3498db;
+            background: #3498db;
+            color: white;
+        }
+
+        .option-label input[type="radio"] {
+            display: none;
+        }
+
+        .option-number {
+            font-size: 1.5em;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .option-text {
+            font-size: 0.8em;
+            line-height: 1.2;
+        }
+
+        .progress-section {
+            background: #2c3e50;
+            padding: 20px 40px;
+            color: white;
+        }
+
+        .progress-bar {
+            background: #34495e;
+            height: 10px;
+            border-radius: 5px;
+            overflow: hidden;
+            margin-bottom: 15px;
+        }
+
+        .progress-fill {
+            background: linear-gradient(to right, #3498db, #2ecc71);
+            height: 100%;
+            border-radius: 5px;
+            transition: width 0.3s ease;
+        }
+
+        .progress-text {
+            text-align: center;
+            font-size: 1.1em;
+        }
+
+        .submit-section {
+            padding: 40px;
+            text-align: center;
+            background: #f8f9fa;
+        }
+
+        .submit-btn {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 20px 40px;
+            border-radius: 30px;
+            font-size: 1.2em;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            margin-top: 20px;
+        }
+
+        .submit-btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .submit-btn:disabled {
+            background: #bdc3c7;
+            cursor: not-allowed;
+            transform: none;
+            box-shadow: none;
+        }
+
+        .results-section {
+            display: none;
+            padding: 40px;
+            background: linear-gradient(120deg, #84fab0 0%, #8fd3f4 100%);
+            text-align: center;
+        }
+
+        .results-section.show {
+            display: block;
+        }
+
+        .result-card {
+            background: white;
+            padding: 30px;
+            border-radius: 20px;
+            margin: 20px 0;
+            box-shadow: 0 10px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .result-score {
+            font-size: 3em;
+            font-weight: bold;
+            color: #3498db;
+            margin-bottom: 10px;
+        }
+
+        .result-label {
+            font-size: 1.3em;
+            color: #2c3e50;
+            margin-bottom: 15px;
+        }
+
+        .result-description {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .type-indicator {
+            display: inline-block;
+            padding: 10px 20px;
+            border-radius: 25px;
+            font-weight: bold;
+            font-size: 1.1em;
+            margin: 10px 5px;
+        }
+
+        .type-planning {
+            background: #3498db;
+            color: white;
+        }
+
+        .type-automatic {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .type-balanced {
+            background: #f39c12;
+            color: white;
+        }
+
+        .interpretation {
+            background: white;
+            padding: 25px;
+            border-radius: 15px;
+            margin-top: 20px;
+            text-align: left;
+        }
+
+        .interpretation h4 {
+            color: #2c3e50;
+            margin-bottom: 15px;
+            font-size: 1.2em;
+        }
+
+        .interpretation ul {
+            color: #555;
+            line-height: 1.6;
+        }
+
+        .interpretation li {
+            margin-bottom: 8px;
+        }
+
+        .reset-btn {
+            background: #95a5a6;
+            color: white;
+            border: none;
+            padding: 15px 30px;
+            border-radius: 25px;
+            font-size: 1em;
+            cursor: pointer;
+            margin-top: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .reset-btn:hover {
+            background: #7f8c8d;
+        }
+
+        @media (max-width: 768px) {
+            .options {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+            
+            .option-label {
+                flex-direction: row;
+                justify-content: center;
+                padding: 10px;
+            }
+            
+            .option-number {
+                margin-right: 10px;
+                margin-bottom: 0;
+            }
+            
+            .scale-grid {
+                grid-template-columns: 1fr;
+                gap: 5px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <!-- ヘッダー -->
+        <div class="header">
+            <h1>COHS習慣タイプ診断</h1>
+            <p>Creature of Habit Scale<br>あなたの習慣傾向を科学的に測定します</p>
+        </div>
+
+        <!-- 説明セクション -->
+        <div class="intro-section">
+            <h2>診断について</h2>
+            <p>この診断は、ケンブリッジ大学で開発された科学的な習慣測定ツールです。27の質問に答えることで、あなたの習慣タイプが「計画型」か「衝動型」かを判定します。</p>
+            <p><strong>所要時間：</strong>約5〜10分　<strong>質問数：</strong>27問</p>
+            
+            <div class="scale-explanation">
+                <h3>回答方法</h3>
+                <p>各質問について、あなたにどの程度当てはまるかを1〜5の段階で選んでください。</p>
+                <div class="scale-grid">
+                    <div class="scale-item scale-1">1<br>全く当てはまらない</div>
+                    <div class="scale-item scale-2">2<br>あまり当てはまらない</div>
+                    <div class="scale-item scale-3">3<br>どちらでもない</div>
+                    <div class="scale-item scale-4">4<br>やや当てはまる</div>
+                    <div class="scale-item scale-5">5<br>非常に当てはまる</div>
+                </div>
+            </div>
+        </div>
+
+        <!-- 進捗バー -->
+        <div class="progress-section">
+            <div class="progress-bar">
+                <div class="progress-fill" id="progressFill"></div>
+            </div>
+            <div class="progress-text" id="progressText">質問 0 / 27</div>
+        </div>
+
+        <!-- 質問セクション -->
+        <div class="questionnaire-section" id="questionnaireSection">
+            <!-- ルーチン行動セクション -->
+            <div class="section-header">
+                <h3>📅 Part 1: 日常のルーチンについて</h3>
+                <p>普段の生活パターンや習慣についてお聞きします。</p>
+            </div>
+
+            <!-- 質問1 -->
+            <div class="question-item" data-category="routine" data-question="1">
+                <div class="question-text">
+                    <span class="question-number">1</span>
+                    私はルーチン（決まった手順）を好む。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q1" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問2 -->
+            <div class="question-item" data-category="routine" data-question="2">
+                <div class="question-text">
+                    <span class="question-number">2</span>
+                    私は規則性に快適さを見出す。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q2" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問3 -->
+            <div class="question-item" data-category="routine" data-question="3">
+                <div class="question-text">
+                    <span class="question-number">3</span>
+                    新しいことを探求するよりも、試行済みで確実なものに頼る。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q3" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問4 -->
+            <div class="question-item" data-category="routine" data-question="4">
+                <div class="question-text">
+                    <span class="question-number">4</span>
+                    自分に挑戦するよりも、コンフォートゾーン（快適な領域）で働くことを幸せに感じる。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q4" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問5 -->
+            <div class="question-item" data-category="routine" data-question="5">
+                <div class="question-text">
+                    <span class="question-number">5</span>
+                    できる限り長く、慣れ親しんだソフトウェアのバージョンを使い続ける傾向がある。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q5" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問6 -->
+            <div class="question-item" data-category="routine" data-question="6">
+                <div class="question-text">
+                    <span class="question-number">6</span>
+                    一般的に同じスパイス・調味料で料理をする。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q6" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問7 -->
+            <div class="question-item" data-category="routine" data-question="7">
+                <div class="question-text">
+                    <span class="question-number">7</span>
+                    通常、同じ食料品店から同じ食品を購入する。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q7" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問8 -->
+            <div class="question-item" data-category="routine" data-question="8">
+                <div class="question-text">
+                    <span class="question-number">8</span>
+                    レストランでは、慣れ親しんだ料理を注文する傾向がある。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q8" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問9 -->
+            <div class="question-item" data-category="routine" data-question="9">
+                <div class="question-text">
+                    <span class="question-number">9</span>
+                    毎朝同じ順序で行動する傾向がある（起床→トイレ→コーヒーなど）。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q9" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問10 -->
+            <div class="question-item" data-category="routine" data-question="10">
+                <div class="question-text">
+                    <span class="question-number">10</span>
+                    バスや映画館、教会などで、いつも同じ席に座ろうとする。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q10" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q10" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q10" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q10" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q10" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問11 -->
+            <div class="question-item" data-category="routine" data-question="11">
+                <div class="question-text">
+                    <span class="question-number">11</span>
+                    通常、ダイニングテーブルの同じ場所に座る。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q11" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q11" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q11" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q11" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q11" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問12 -->
+            <div class="question-item" data-category="routine" data-question="12">
+                <div class="question-text">
+                    <span class="question-number">12</span>
+                    車やバイクをいつも同じ場所に駐車するのが好きだ。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q12" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q12" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q12" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q12" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q12" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問13 -->
+            <div class="question-item" data-category="routine" data-question="13">
+                <div class="question-text">
+                    <span class="question-number">13</span>
+                    料理を作る時は、いつも決まった順序に従う。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q13" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q13" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q13" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q13" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q13" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問14 -->
+            <div class="question-item" data-category="routine" data-question="14">
+                <div class="question-text">
+                    <span class="question-number">14</span>
+                    直前のキャンセルに本当にイライラする人間だ。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q14" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q14" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q14" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q14" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q14" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問15 -->
+            <div class="question-item" data-category="routine" data-question="15">
+                <div class="question-text">
+                    <span class="question-number">15</span>
+                    毎晩だいたい同じ時間に寝る傾向がある。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q15" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q15" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q15" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q15" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q15" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問16 -->
+            <div class="question-item" data-category="routine" data-question="16">
+                <div class="question-text">
+                    <span class="question-number">16</span>
+                    一般的に毎日同じものを朝食に食べる。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q16" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q16" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q16" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q16" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q16" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 自動性セクション -->
+            <div class="section-header">
+                <h3>⚡ Part 2: 自動的な行動について</h3>
+                <p>無意識に行ってしまう行動パターンについてお聞きします。</p>
+            </div>
+
+            <!-- 質問17 -->
+            <div class="question-item" data-category="automatic" data-question="17">
+                <div class="question-text">
+                    <span class="question-number">17</span>
+                    ビスケットの袋がそこにあるだけで、全部食べ終えてしまうことがよくある。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q17" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q17" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q17" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q17" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q17" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問18 -->
+            <div class="question-item" data-category="automatic" data-question="18">
+                <div class="question-text">
+                    <span class="question-number">18</span>
+                    気づくと食器棚を開けてスナックを取っていることがよくある。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q18" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q18" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q18" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q18" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q18" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問19 -->
+            <div class="question-item" data-category="automatic" data-question="19">
+                <div class="question-text">
+                    <span class="question-number">19</span>
+                    お菓子やビスケットの皿の前を通ると、つい一つ取ってしまう。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q19" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q19" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q19" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q19" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q19" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問20 -->
+            <div class="question-item" data-category="automatic" data-question="20">
+                <div class="question-text">
+                    <span class="question-number">20</span>
+                    テレビを見ていると、特にコントロールできない食べ方をしてしまう。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q20" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q20" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q20" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q20" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q20" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問21 -->
+            <div class="question-item" data-category="automatic" data-question="21">
+                <div class="question-text">
+                    <span class="question-number">21</span>
+                    気づかないうちに食べていることがよくある。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q21" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q21" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q21" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q21" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q21" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問22 -->
+            <div class="question-item" data-category="automatic" data-question="22">
+                <div class="question-text">
+                    <span class="question-number">22</span>
+                    ストレスを感じると、つい多く食べてしまう傾向がある。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q22" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q22" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q22" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q22" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q22" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問23 -->
+            <div class="question-item" data-category="automatic" data-question="23">
+                <div class="question-text">
+                    <span class="question-number">23</span>
+                    袋から直接ポテトチップスやビスケットを食べるのが典型的な私だ。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q23" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q23" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q23" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q23" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q23" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問24 -->
+            <div class="question-item" data-category="automatic" data-question="24">
+                <div class="question-text">
+                    <span class="question-number">24</span>
+                    キッチンに入ると、いつも冷蔵庫の中を覗いてしまう。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q24" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q24" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q24" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q24" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q24" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問25 -->
+            <div class="question-item" data-category="automatic" data-question="25">
+                <div class="question-text">
+                    <span class="question-number">25</span>
+                    通常、仕事終わりにスナックで自分にご褒美をあげる。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q25" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q25" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q25" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q25" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q25" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問26 -->
+            <div class="question-item" data-category="automatic" data-question="26">
+                <div class="question-text">
+                    <span class="question-number">26</span>
+                    移動中（運転中、歩行中、ネットサーフィン中など）にスナックを取ることがよくある。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q26" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q26" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q26" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q26" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q26" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+
+            <!-- 質問27 -->
+            <div class="question-item" data-category="automatic" data-question="27">
+                <div class="question-text">
+                    <span class="question-number">27</span>
+                    「オートパイロット」で行動していて、なぜ特定の場所にいるのか、意図していなかった何かをしているのか疑問に思うことがよくある。
+                </div>
+                <div class="options">
+                    <label class="option-label">
+                        <input type="radio" name="q27" value="1">
+                        <span class="option-number">1</span>
+                        <span class="option-text">全く当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q27" value="2">
+                        <span class="option-number">2</span>
+                        <span class="option-text">あまり当てはまらない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q27" value="3">
+                        <span class="option-number">3</span>
+                        <span class="option-text">どちらでもない</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q27" value="4">
+                        <span class="option-number">4</span>
+                        <span class="option-text">やや当てはまる</span>
+                    </label>
+                    <label class="option-label">
+                        <input type="radio" name="q27" value="5">
+                        <span class="option-number">5</span>
+                        <span class="option-text">非常に当てはまる</span>
+                    </label>
+                </div>
+            </div>
+        </div>
+
+        <!-- 送信セクション -->
+        <div class="submit-section">
+            <p style="color: #555; margin-bottom: 20px;">
+                すべての質問に回答してから診断ボタンを押してください。
+            </p>
+            <button class="submit-btn" id="submitBtn" onclick="calculateResults()" disabled>
+                診断結果を見る
+            </button>
+        </div>
+
+        <!-- 結果セクション -->
+        <div class="results-section" id="resultsSection">
+            <h2 style="color: #2c3e50; font-size: 2.5em; margin-bottom: 30px;">あなたの習慣タイプ診断結果</h2>
+            
+            <div class="result-card">
+                <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 30px;">
+                    <div>
+                        <div class="result-score" id="routineScore">0</div>
+                        <div class="result-label">ルーチン行動</div>
+                        <div class="result-description">
+                            計画性・規則性・安定性を好む傾向
+                        </div>
+                    </div>
+                    <div>
+                        <div class="result-score" id="automaticScore">0</div>
+                        <div class="result-label">自動性</div>
+                        <div class="result-description">
+                            無意識の自動反応・環境手がかりへの反応
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <h3 style="color: #2c3e50; margin-bottom: 20px;">あなたの習慣タイプ</h3>
+                <div id="habitType">バランス型</div>
+                
+                <div class="interpretation">
+                    <h4>あなたの特徴</h4>
+                    <div id="typeCharacteristics">
+                        <ul>
+                            <li>計画性と柔軟性のバランスが取れている</li>
+                            <li>状況に応じて適切な行動を選択できる</li>
+                            <li>ストレス状況でも比較的安定した行動パターン</li>
+                        </ul>
+                    </div>
+                    
+                    <h4>目標達成のための推奨戦略</h4>
+                    <div id="recommendedStrategies">
+                        <ul>
+                            <li>基本的な計画を立てつつ、柔軟性も確保する</li>
+                            <li>環境設計とセルフモニタリングを組み合わせる</li>
+                            <li>定期的な見直しで戦略を調整する</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <div class="result-card">
+                <h4 style="color: #2c3e50; margin-bottom: 15px;">スコアの解釈</h4>
+                <p style="color: #555; line-height: 1.6;">
+                    <strong>ルーチン行動：</strong>16-48点（平均32点）<br>
+                    <strong>自動性：</strong>11-33点（平均22点）<br>
+                    <br>
+                    この診断は、ケンブリッジ大学で開発された科学的測定ツールに基づいています。結果は参考情報として活用し、習慣改善のヒントとしてお役立てください。
+                </p>
+            </div>
+
+            <button class="reset-btn" onclick="resetQuiz()">もう一度診断する</button>
+        </div>
+    </div>
+
+    <script>
+        let answers = {};
+        const totalQuestions = 27;
+
+        // 選択肢のイベントリスナー設定
+        document.addEventListener('DOMContentLoaded', function() {
+            setupOptionListeners();
+            updateProgress();
+        });
+
+        function setupOptionListeners() {
+            const optionLabels = document.querySelectorAll('.option-label');
+            optionLabels.forEach(label => {
+                label.addEventListener('click', function() {
+                    const radio = this.querySelector('input[type="radio"]');
+                    const questionName = radio.name;
+                    
+                    // 同じ質問の他の選択肢から selected クラスを削除
+                    const sameQuestionOptions = document.querySelectorAll(`input[name="${questionName}"]`);
+                    sameQuestionOptions.forEach(option => {
+                        option.closest('.option-label').classList.remove('selected');
+                    });
+                    
+                    // 選択された選択肢に selected クラスを追加
+                    this.classList.add('selected');
+                    radio.checked = true;
+                    
+                    // 回答を保存
+                    answers[questionName] = parseInt(radio.value);
+                    
+                    // 進捗更新
+                    updateProgress();
+                });
+            });
+        }
+
+        function updateProgress() {
+            const answeredCount = Object.keys(answers).length;
+            const progressPercent = (answeredCount / totalQuestions) * 100;
+            
+            document.getElementById('progressFill').style.width = progressPercent + '%';
+            document.getElementById('progressText').textContent = `質問 ${answeredCount} / ${totalQuestions}`;
+            
+            // すべて回答済みの場合、送信ボタンを有効化
+            const submitBtn = document.getElementById('submitBtn');
+            if (answeredCount === totalQuestions) {
+                submitBtn.disabled = false;
+                submitBtn.textContent = '診断結果を見る';
+            } else {
+                submitBtn.disabled = true;
+                submitBtn.textContent = `残り ${totalQuestions - answeredCount} 問`;
+            }
+        }
+
+        function calculateResults() {
+            // ルーチン行動スコア計算（質問1-16）
+            let routineScore = 0;
+            for (let i = 1; i <= 16; i++) {
+                routineScore += answers[`q${i}`] || 0;
+            }
+            
+            // 自動性スコア計算（質問17-27）
+            let automaticScore = 0;
+            for (let i = 17; i <= 27; i++) {
+                automaticScore += answers[`q${i}`] || 0;
+            }
+            
+            // 結果表示
+            displayResults(routineScore, automaticScore);
+            
+            // 結果セクションにスクロール
+            document.getElementById('resultsSection').classList.add('show');
+            document.getElementById('resultsSection').scrollIntoView({ behavior: 'smooth' });
+        }
+
+        function displayResults(routineScore, automaticScore) {
+            document.getElementById('routineScore').textContent = routineScore;
+            document.getElementById('automaticScore').textContent = automaticScore;
+            
+            // タイプ判定
+            let habitType, typeClass, characteristics, strategies;
+            
+            if (routineScore >= 48 && automaticScore < 25) {
+                habitType = '計画型';
+                typeClass = 'type-planning';
+                characteristics = `
+                    <ul>
+                        <li>規則性と予測可能性を重視する</li>
+                        <li>計画的で組織的なアプローチを好む</li>
+                        <li>ルーチンワークが得意で効率的</li>
+                        <li>予期せぬ変化に対してストレスを感じやすい</li>
+                    </ul>
+                `;
+                strategies = `
+                    <ul>
+                        <li>詳細な行動計画と予備プランを準備する</li>
+                        <li>変化への適応プロセスを段階的に設計する</li>
+                        <li>定期的なルーチン見直しで柔軟性を確保する</li>
+                        <li>SMART目標設定で明確な指標を作る</li>
+                    </ul>
+                `;
+            } else if (automaticScore >= 30 && routineScore < 40) {
+                habitType = '衝動型';
+                typeClass = 'type-automatic';
+                characteristics = `
+                    <ul>
+                        <li>環境の手がかりに自動的に反応する</li>
+                        <li>無意識の行動パターンが強い</li>
+                        <li>効率的な日常行動が可能</li>
+                        <li>意識的コントロールが困難な場面がある</li>
+                    </ul>
+                `;
+                strategies = `
+                    <ul>
+                        <li>If-Thenプランニングで自動反応をコントロール</li>
+                        <li>環境設計で望ましくない手がかりを除去</li>
+                        <li>代替行動の練習で新しい自動反応を形成</li>
+                        <li>セルフモニタリングで無意識の行動を意識化</li>
+                    </ul>
+                `;
+            } else {
+                habitType = 'バランス型';
+                typeClass = 'type-balanced';
+                characteristics = `
+                    <ul>
+                        <li>計画性と柔軟性のバランスが取れている</li>
+                        <li>状況に応じて適切な戦略を選択できる</li>
+                        <li>ストレス状況でも比較的安定した行動</li>
+                        <li>多様なアプローチを統合できる</li>
+                    </ul>
+                `;
+                strategies = `
+                    <ul>
+                        <li>基本計画と環境設計の両方を活用</li>
+                        <li>状況に応じて戦略を柔軟に切り替える</li>
+                        <li>定期的な振り返りで最適な方法を見つける</li>
+                        <li>個人の強みを活かした独自のアプローチを開発</li>
+                    </ul>
+                `;
+            }
+            
+            document.getElementById('habitType').innerHTML = `<span class="type-indicator ${typeClass}">${habitType}</span>`;
+            document.getElementById('typeCharacteristics').innerHTML = characteristics;
+            document.getElementById('recommendedStrategies').innerHTML = strategies;
+        }
+
+        function resetQuiz() {
+            answers = {};
+            
+            // ラジオボタンをリセット
+            const radios = document.querySelectorAll('input[type="radio"]');
+            radios.forEach(radio => {
+                radio.checked = false;
+                radio.closest('.option-label').classList.remove('selected');
+            });
+            
+            // 進捗リセット
+            updateProgress();
+            
+            // 結果セクションを隠す
+            document.getElementById('resultsSection').classList.remove('show');
+            
+            // トップにスクロール
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        }
+    </script>
+</body>
+</html>
