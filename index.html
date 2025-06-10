@@ -76,6 +76,35 @@
         line-height: 1.5;
       }
 
+      .research-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 8px;
+        background: rgba(255, 255, 255, 0.15);
+        color: white;
+        text-decoration: none;
+        padding: 10px 16px;
+        border-radius: 25px;
+        font-size: 0.9em;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.3);
+        transition: all 0.3s ease;
+        margin-top: 20px;
+      }
+
+      .research-link:hover {
+        background: rgba(255, 255, 255, 0.25);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        text-decoration: none;
+        color: white;
+      }
+
+      .research-link::after {
+        content: "↗";
+        font-size: 1.1em;
+      }
+
       .intro-section {
         padding: 40px;
         background: #f8f9fa;
@@ -453,6 +482,14 @@
       <div class="header">
         <h1>COHS習慣タイプ診断</h1>
         <p>Creature of Habit Scale<br />あなたの習慣傾向を科学的に測定します</p>
+        <a
+          href="https://www.sciencedirect.com/science/article/pii/S019188691730274X?via%3Dihub"
+          class="research-link"
+          target="_blank"
+          rel="noopener noreferrer"
+        >
+          📊 Cambridge Research Paper
+        </a>
       </div>
 
       <!-- 説明セクション -->
@@ -1529,6 +1566,21 @@
           もう一度診断する
         </button>
       </div>
+
+      <!-- フッター -->
+      <footer
+        style="
+          background: #041f4a;
+          color: white;
+          text-align: center;
+          padding: 30px 40px;
+        "
+      >
+        <p style="margin: 0; font-size: 14px; opacity: 0.9">
+          © <span id="copyright-year">2025</span> Kazo System LLC. All rights
+          reserved.
+        </p>
+      </footer>
     </div>
 
     <script>
@@ -1539,7 +1591,20 @@
       document.addEventListener("DOMContentLoaded", function () {
         setupOptionListeners();
         updateProgress();
+        updateCopyrightYear();
       });
+
+      function updateCopyrightYear() {
+        const currentYear = new Date().getFullYear();
+        const startYear = 2025;
+        const yearElement = document.getElementById("copyright-year");
+
+        if (currentYear > startYear) {
+          yearElement.textContent = `${startYear}-${currentYear}`;
+        } else {
+          yearElement.textContent = startYear.toString();
+        }
+      }
 
       function setupOptionListeners() {
         const optionLabels = document.querySelectorAll(".option-label");
