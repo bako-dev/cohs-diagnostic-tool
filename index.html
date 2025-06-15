@@ -122,6 +122,62 @@
         font-size: 1.1em;
       }
 
+      .social-share {
+        display: flex;
+        justify-content: center;
+        gap: 15px;
+        margin-top: 30px;
+      }
+
+      .share-btn {
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        width: 50px;
+        height: 50px;
+        border-radius: 50%;
+        text-decoration: none;
+        transition: all 0.3s ease;
+        border: 2px solid rgba(255, 255, 255, 0.3);
+        position: relative;
+        overflow: hidden;
+      }
+
+      .share-btn:hover {
+        transform: translateY(-3px);
+        box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+        text-decoration: none;
+      }
+
+      .share-btn.x {
+        background: #000000;
+      }
+
+      .share-btn.x:hover {
+        background: #333333;
+      }
+
+      .share-btn.facebook {
+        background: #0866ff;
+      }
+
+      .share-btn.facebook:hover {
+        background: #0653d3;
+      }
+
+      .share-btn img {
+        width: 24px;
+        height: 24px;
+      }
+
+      .share-btn.x img {
+        filter: brightness(0) invert(1);
+      }
+
+      .share-btn.facebook img {
+        filter: none;
+      }
+
       .intro-section {
         padding: 40px;
         background: #f8f9fa;
@@ -447,6 +503,49 @@
         background: #7f8c8d;
       }
 
+      .footer-content {
+        margin-bottom: 20px;
+      }
+
+      .youtube-channel {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+      }
+
+      .youtube-link {
+        display: inline-flex;
+        align-items: center;
+        gap: 12px;
+        background: rgba(255, 255, 255, 0.1);
+        color: white;
+        text-decoration: none;
+        padding: 12px 20px;
+        border-radius: 25px;
+        font-size: 1em;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.2);
+        transition: all 0.3s ease;
+      }
+
+      .youtube-link:hover {
+        background: rgba(255, 255, 255, 0.2);
+        transform: translateY(-2px);
+        box-shadow: 0 4px 12px rgba(0, 0, 0, 0.2);
+        text-decoration: none;
+        color: white;
+      }
+
+      .youtube-icon {
+        width: 24px;
+        height: 24px;
+        border-radius: 50%;
+      }
+
+      .youtube-text {
+        font-weight: 500;
+      }
+
       @media (max-width: 768px) {
         body {
           padding: 0;
@@ -490,6 +589,39 @@
           grid-template-columns: 1fr;
           gap: 5px;
         }
+
+        .social-share {
+          margin-top: 20px;
+        }
+
+        .share-btn {
+          width: 45px;
+          height: 45px;
+        }
+
+        .share-btn img {
+          width: 20px;
+          height: 20px;
+        }
+
+        .share-btn.x img {
+          filter: brightness(0) invert(1);
+        }
+
+        .share-btn.facebook img {
+          filter: none;
+        }
+
+        .youtube-link {
+          font-size: 0.9em;
+          padding: 10px 16px;
+          gap: 8px;
+        }
+
+        .youtube-icon {
+          width: 20px;
+          height: 20px;
+        }
       }
     </style>
   </head>
@@ -507,6 +639,25 @@
         >
           Cambridge Research Paper
         </a>
+
+        <div class="social-share">
+          <a
+            href="#"
+            class="share-btn x"
+            onclick="shareOnX()"
+            title="Xでシェア"
+          >
+            <img src="images/x-logo.png" alt="X" />
+          </a>
+          <a
+            href="#"
+            class="share-btn facebook"
+            onclick="shareOnFacebook()"
+            title="Facebookでシェア"
+          >
+            <img src="images/facebook-logo.png" alt="Facebook" />
+          </a>
+        </div>
       </div>
 
       <!-- 説明セクション -->
@@ -1593,7 +1744,25 @@
           padding: 30px 40px;
         "
       >
-        <p style="margin: 0; font-size: 14px; opacity: 0.9">
+        <div class="footer-content">
+          <div class="youtube-channel">
+            <a
+              href="https://www.youtube.com/channel/UCTknAXpib1oROP_bva7YA6Q"
+              class="youtube-link"
+              target="_blank"
+              rel="noopener noreferrer"
+              title="YouTubeチャンネル"
+            >
+              <img
+                src="images/channel-icon.png"
+                alt="YouTube"
+                class="youtube-icon"
+              />
+              <span class="youtube-text">科学でひもとく行動心理</span>
+            </a>
+          </div>
+        </div>
+        <p style="margin: 20px 0 0 0; font-size: 14px; opacity: 0.9">
           © <span id="copyright-year">2025</span> Kazo System LLC. All rights
           reserved.
         </p>
@@ -1787,6 +1956,22 @@
 
         // トップにスクロール
         window.scrollTo({ top: 0, behavior: "smooth" });
+      }
+
+      // SNSシェア機能
+      function shareOnX() {
+        const url = encodeURIComponent(window.location.href);
+        const text = encodeURIComponent(
+          "COHS習慣タイプ診断をやってみました！あなたの習慣タイプは計画型？衝動型？科学的な測定ツールで確認してみよう #習慣診断 #行動心理学"
+        );
+        const xUrl = `https://x.com/intent/tweet?text=${text}&url=${url}`;
+        window.open(xUrl, "_blank", "width=550,height=420");
+      }
+
+      function shareOnFacebook() {
+        const url = encodeURIComponent(window.location.href);
+        const facebookUrl = `https://www.facebook.com/sharer.php?u=${url}`;
+        window.open(facebookUrl, "_blank", "width=600,height=400");
       }
     </script>
   </body>
